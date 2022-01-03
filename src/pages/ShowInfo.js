@@ -1,18 +1,30 @@
 import React,{useEffect , useState} from 'react'
-import {Paper ,Box , Container , Grid , Avatar  , Modal , styled , Typography , CssBaseline , MenuItem , Button, Divider ,Select ,FormControl ,InputLabel  } from '@mui/material'
+import {Paper ,Box , Container , Grid , Avatar  , Modal , styled , Typography , CssBaseline , MenuItem , Button, Divider ,Select ,FormControl ,InputLabel  , TextField} from '@mui/material'
 import img from '../images/person.jpg'
 import ok from '../images/ok.png'
 import {useSelector , useDispatch} from 'react-redux'
-import {login} from '../redux/action/actions'
 import axios from 'axios'
 import { useParams  , Link} from 'react-router-dom';
-import {logout} from '../redux/action/actions'
+import {logout , login , modalmodify} from '../redux/action/actions'
+import { MenuRight } from './MenuRight'
+import {importCartabl , exporttcartabl} from '../redux/action/actions'
+import { ImportCartabl } from './ImportCartabl'
+import { ExportCartabl } from './ٍExportCartabl'
+import { Modify } from './Modify'
 
 export const ShowInfo = (props) => {
 
+    const [userName, setUserName] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setconfirmPassword] = useState('');
+    const [confirm, setConfirm] = useState(false);
     const stateLogin = useSelector(state =>state.login);
+    const stateimport = useSelector(state =>state.import);
+    const stateexport = useSelector(state =>state.export);
+    const statemodify = useSelector(state =>state.modify);
     const dispatch = useDispatch();
 
+   
     const [age, setAge] = React.useState('');
 
     const handleChange = (event) => {
@@ -20,37 +32,26 @@ export const ShowInfo = (props) => {
     };
   
 
-    console.log(stateLogin)
     const [data, setData] = useState([]);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const {id} = useParams();
 
     useEffect(() => {
         axios.get(`https://fakestoreapi.com/users/${id}`).then(response=>{
             const data = response.data;
             setData(data);
-        })
+        });
     }, [])
+
+const modify = () =>{
+  dispatch(modalmodify());
+}
+     
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const MyComponent = styled('div')({
-        color: 'darkslategray',
-        backgroundColor: 'aliceblue',
-        padding: 8,
-        borderRadius: 4,
-      });
-
-      const Item = styled(Paper)(({ theme }) => ({
-        ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-      }));
-   
-  
-    const style_1 = {
+    const style = {
         position: 'absolute',
         top: '50%',
         left: '50%',
@@ -62,26 +63,16 @@ export const ShowInfo = (props) => {
         p: 4,
       };
 
+    const handletest = () =>{
+      alert('test')
+      setConfirm(true);
+      setOpen(false);
+    }
+    
+    
     return (
         <>
         <CssBaseline />
-         <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-        <Box sx={style_1}>
-          <Typography id="modal-modal-title" variant="h4" component="h2" textAlign={'center'} color={'#7aa054'}>
-              <img src={ok} alt={ok} width={'20%'}/><br/>
-            موفق!
-          </Typography>
-          <Typography id="modal-modal-description" variant='h5' component={'h5'} color={'#677077'} fontWeight={'bold'} textAlign={'center'}  sx={{ mt: 2 }}>
-          با موفقیت وارد شدید
-          </Typography><br/>
-               <Button variant='contained' onClick={()=>handleClose()} style={{margin:'auto' , display:'flex' , width:'30%'}}>ok</Button>
-        </Box>
-      </Modal>
            <Container maxWidth="false" >
            <Grid container spacing={1}>
                         <Grid item xs={10}  style={{height:'100px' ,background:'#fff' , display:'flex'}}>
@@ -104,15 +95,11 @@ export const ShowInfo = (props) => {
                                 </Link>
                             </MenuItem>
                             <MenuItem value={21}>پروفایل</MenuItem>
-                            <MenuItem value={22}>تغییر رمز عبور</MenuItem>
+                            <MenuItem value={22}>
+                            <Button onClick={handleOpen}>تغییر رمز عبور</Button>
+                            </MenuItem>
                             </Select>
                         </FormControl>
-                        {/* {stateLogin === '1' ? (
-                                <Link to="/logout" style={{ textDecoration: 'none', color: '#333' , fontWeight:'bold' , marginTop:'10px'}} onClick={()=>dispatch(logout())}> 
-                                    خروج
-                                </Link>
-                        ):(null)} */}
-                               
                         </Grid>
                         <Grid item xs={2}  style={{height:'100px' , background:'#6f4343'}}>
                         <Typography
@@ -137,10 +124,14 @@ export const ShowInfo = (props) => {
                     </Grid>
                     <Grid container spacing={2}>
                         <Grid item xs={10} style={{background:'#8ac0db' , padding:'15px' ,height:'100vh'}}>
-                            <h1>Page Show Information Users</h1>
+                            {/* <h1>Page Show Information Users</h1> */}
+                            {stateimport === '1' ? <ImportCartabl /> : null}
+                            {stateexport === '1' ? <ExportCartabl /> : null}
+                            {stateexport === '0' && stateimport === '0' ? <h1>Page Show Information Users</h1> : null}
+                                
                         </Grid>
                         <Grid item xs={2} style={{background:'#668ea2' , padding:'15px'}}>
-                        <Avatar alt="Cindy Baker" src={img} style={{margin:'auto' , width:'20%', height:'10%'}}
+                        <Avatar alt="Cindy Baker" src={img} style={{margin:'5px auto' , width:'22%', height:'7%'}}
                         />
                             <Typography
                              variant='text'
@@ -152,29 +143,57 @@ export const ShowInfo = (props) => {
                                  {data.username}<br/>
                                 
                              </Typography>
-                            <Typography
-                             variant='text'
-                             component={'p'}
-                             textAlign={'left'}
-                             color={'#fff'}
-                             fontWeight={'bold'}
-                             margin={'20px 0'}
-                             padding={'15px 0'}
-                             fontSize={'15px'}
-                             >
-                                 <span>Name : </span>{data.username}<br/>
-                                 <Divider/>
-                                <span>Password :</span>{data.password}<br/>
-                                <Divider/>
-                                <span>Email :</span>{data.email}<br/>
-                                <Divider/>
-                                <span>Phone :</span>{data.phone}<br/>
-                             </Typography>
+                             <MenuRight />
                         </Grid>
                     </Grid>
                     </Box>
                </Grid>
            </Container>
+           <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+          >
+              <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h6" textAlign={'right'}>
+              فرم تغییر پسورد
+              </Typography>
+              <TextField fullWidth label=" رمز عبور قدیم" id="fullWidth"
+                      type="password"
+                       onChange={(e) => {
+                      setPassword(e.target.value);
+                  }} variant="standard"
+                      />
+                      <div style={{display:'flex' , justifyContent:'space-around'}}>
+                      <TextField fullWidth label=" رمز عبور جدید" id="fullWidth"
+                      type="password"
+                      sx={{margin:'2px'}}
+                       onChange={(e) => {
+                      setPassword(e.target.value);
+                  }} variant="standard"
+                      />
+              <TextField fullWidth label="  تکرار رمز عبور جدید " id="fullWidth"
+                      type="password"
+                      sx={{margin:'2px'}}
+                       onChange={(e) => {
+                        setconfirmPassword(e.target.value); 
+                      }} variant="standard"
+                      />
+                      </div><br/>
+                      {password > '0' && confirmPassword > '0'  ? (
+
+                      password !== confirmPassword ? <h6 style={{textAlign:'right' , color:'red' , fontWeight:'bold'}}>!رمز عبور مطابقت ندارد</h6>  : null
+                      ):null}
+                      {/* {confirm === '1' ?  'رمز عبور مطابقت ندارد!' : null} */}
+                  <br/>
+                  {password !== confirmPassword ? (
+                    <Button variant='contained' disabled onClick={handletest}>ثبت</Button>
+                  ):(
+                    <Button variant='contained' onClick={handletest}>ثبت</Button>
+                  )}
+              </Box>
+          </Modal>
         </>
     )
 }

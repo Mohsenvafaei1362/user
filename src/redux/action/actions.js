@@ -9,6 +9,15 @@ export const login = () => {
 export const logout = () => {
     return { type: actionTypes.LOGOUT };
 };
+export const importCartabl = () => {
+    return { type: actionTypes.IMPORTCARTABL };
+};
+export const exporttcartabl = () => {
+    return { type: actionTypes.EXPORTCARTABL };
+};
+export const modalmodify = () => {
+    return { type: actionTypes.MODALMODIFY };
+};
 
 
 

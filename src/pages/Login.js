@@ -1,17 +1,16 @@
 import React,{useEffect , useState} from 'react'
-import {Typography ,Button , Container , Grid , CssBaseline  , TextField} from '@mui/material'
+import {Typography ,Button , Container , Grid , CssBaseline  , TextField , Modal , Box} from '@mui/material'
 import axios from 'axios'
-import { ShowInfo } from './ShowInfo';
 import logo from '../images/logo.png'
 import {useNavigate} from 'react-router-dom';
 import {useSelector , useDispatch} from 'react-redux'
 import {login} from '../redux/action/actions'
 
-export const User = () => {
+export const Login = () => {
 
-    // const [data, setData] = useState('');
     const stateLogin = useSelector(state =>state.login);
     const dispatch = useDispatch();
+  
 
     console.log(stateLogin)
     const [data, setData] = useState([]);
@@ -19,17 +18,7 @@ export const User = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        // axios.get(`https://fakestoreapi.com/users/`).then(response=>{
-        //       const data = response.data;
-        //       setData(data);
-        //       console.log('data : ', data);
-        // }).catch(err=>{
-        //     console.log(err)
-        // })
-    
-    }, [])
-
+  
  
     const validation = (e) =>{
         e.preventDefault();
@@ -37,11 +26,10 @@ export const User = () => {
             const data = response.data;
             setData(data);
             dispatch(login());
+           
       }).catch(err=>{
           console.log(err)
       })
-  
-       
     }
     return (
         <>
@@ -84,9 +72,7 @@ export const User = () => {
               </Container>
             {data.map((info) => (
                 <div key={info.id}>
-                    {/* {info.username} */}
-                    {info.username === userName && info.password === password ? (navigate(`/ShowInfo/${info.id}`) ):(console.log('not ok'))}
-                    {/* {info.username === userName && info.password === password ? (<ShowInfo id={info.id} /> ):(console.log('not ok'))} */}
+                    {info.username === userName && info.password === password ? (navigate(`/ShowInfo/${info.id}`)):(console.log('not ok'))}
                 </div>
             ))}
             </div>

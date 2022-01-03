@@ -2,6 +2,9 @@ import * as actionTypes from '../contants/action-types'
 const initState = {
     countMessage: 'testMessage',
     login : '0',
+    import :'0',
+    export : '0',
+    modify :'0'
 
 }
 export const rootReducer = (state = initState, action) => {
@@ -21,6 +24,20 @@ export const rootReducer = (state = initState, action) => {
             case actionTypes.LOGOUT:
                 return { ...state,
                     login : '0'
+                 };
+            case actionTypes.IMPORTCARTABL:
+                return { ...state,
+                    import : '1',
+                    export :'0',
+                 };
+            case actionTypes.EXPORTCARTABL:
+                return { ...state,
+                    export :'1',
+                    import : '0',
+                 };
+                 case actionTypes.MODALMODIFY:
+                return { ...state,
+                    modify : '1'
                  };
 
             default:
